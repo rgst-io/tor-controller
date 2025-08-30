@@ -27,8 +27,8 @@ import (
 	"k8s.io/apimachinery/pkg/util/runtime"
 	k8slog "sigs.k8s.io/controller-runtime/pkg/log"
 
-	torv1alpha2 "github.com/bugfest/tor-controller/apis/tor/v1alpha2"
 	"github.com/cockroachdb/errors"
+	torv1alpha2 "github.com/rgst-io/tor-controller/apis/tor/v1alpha2"
 )
 
 func (r *OnionBalancedServiceReconciler) reconcileRole(ctx context.Context, onionBalancedService *torv1alpha2.OnionBalancedService) error {

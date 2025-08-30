@@ -28,8 +28,8 @@ import (
 
 	"github.com/cockroachdb/errors"
 
-	configv2 "github.com/bugfest/tor-controller/apis/config/v2"
-	torv1alpha2 "github.com/bugfest/tor-controller/apis/tor/v1alpha2"
+	configv2 "github.com/rgst-io/tor-controller/apis/config/v2"
+	torv1alpha2 "github.com/rgst-io/tor-controller/apis/tor/v1alpha2"
 )
 
 //nolint:unparam // as expected

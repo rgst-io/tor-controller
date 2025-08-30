@@ -16,8 +16,8 @@ import (
 	"k8s.io/client-go/tools/cache"
 	"k8s.io/client-go/util/workqueue"
 
-	config "github.com/bugfest/tor-controller/agents/tor/config"
-	v1alpha2 "github.com/bugfest/tor-controller/apis/tor/v1alpha2"
+	config "github.com/rgst-io/tor-controller/agents/tor/config"
+	v1alpha2 "github.com/rgst-io/tor-controller/apis/tor/v1alpha2"
 )
 
 const (

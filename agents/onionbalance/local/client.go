@@ -26,8 +26,8 @@ import (
 
 	"github.com/cockroachdb/errors"
 
-	onionbalancedaemon "github.com/bugfest/tor-controller/agents/onionbalance/onionbalancedaemon"
-	torv1alpha2 "github.com/bugfest/tor-controller/apis/tor/v1alpha2"
+	onionbalancedaemon "github.com/rgst-io/tor-controller/agents/onionbalance/onionbalancedaemon"
+	torv1alpha2 "github.com/rgst-io/tor-controller/apis/tor/v1alpha2"
 )
 
 var namespace, onionBalancedServiceName string

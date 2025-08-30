@@ -31,7 +31,7 @@ import (
 
 	"github.com/cockroachdb/errors"
 
-	torv1alpha2 "github.com/bugfest/tor-controller/apis/tor/v1alpha2"
+	torv1alpha2 "github.com/rgst-io/tor-controller/apis/tor/v1alpha2"
 )
 
 const (

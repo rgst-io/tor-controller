@@ -13,7 +13,7 @@ import (
 	"k8s.io/client-go/tools/cache"
 	"k8s.io/client-go/util/workqueue"
 
-	config "github.com/bugfest/tor-controller/agents/onionbalance/config"
+	config "github.com/rgst-io/tor-controller/agents/onionbalance/config"
 )
 
 const (

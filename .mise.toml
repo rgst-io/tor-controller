@@ -1,0 +1,40 @@
+[tools]
+bun = "latest"
+git-cliff = "latest"
+golang = "1.25.0"
+golangci-lint = "2.4.0"
+goreleaser = "latest"
+"go:gotest.tools/gotestsum" = "1.12.3"
+"go:golang.org/x/tools/cmd/goimports" = "latest"
+"go:mvdan.cc/sh/v3/cmd/shfmt" = "latest"
+"go:github.com/thenativeweb/get-next-version" = "latest"
+"go:sigs.k8s.io/controller-tools/cmd/controller-gen" = "0.19.0"
+yq = "latest"
+
+[tasks.build]
+description = "Build a binary for the current platform/architecture"
+sources = ['*.go', '**/*.go']
+run = "go build -trimpath -o ./bin/ -v ./cmd/..."
+
+[tasks.fmt]
+alias = "format"
+description = "Format code"
+run = [
+	"go mod tidy",
+	"gofmt -s -w .",
+	"goimports -w .",
+	"shfmt -w .",
+	"bun node_modules/.bin/prettier --write '**/*.{json,yaml,yml,md,jsonschema.json}'",
+]
+
+[tasks.test]
+description = "Run tests"
+run = "gotestsum"
+
+[tasks.generate]
+description = "Run codegeneration task(s)"
+run = [
+	"controller-gen object:headerFile=\"hack/boilerplate.go.txt\" paths=\"./...\"",
+	"controller-gen rbac:roleName=manager-role crd:maxDescLen=80 webhook paths=\"./...\" output:crd:artifacts:config=config/crd/bases",
+	"./hack/remove-containers-requirement.sh config/crd/bases",
+]

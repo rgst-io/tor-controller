@@ -5,7 +5,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	local "github.com/bugfest/tor-controller/agents/tor/local"
+	local "github.com/rgst-io/tor-controller/agents/tor/local"
 )
 
 // tor-manager main.

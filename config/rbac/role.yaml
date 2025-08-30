@@ -2,13 +2,15 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  creationTimestamp: null
   name: manager-role
 rules:
 - apiGroups:
   - ""
   resources:
   - configmaps
+  - secrets
+  - serviceaccounts
+  - services
   verbs:
   - create
   - delete
@@ -25,42 +27,6 @@ rules:
   - create
   - patch
   - update
-- apiGroups:
-  - ""
-  resources:
-  - secrets
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - ""
-  resources:
-  - serviceaccounts
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - ""
-  resources:
-  - services
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
 - apiGroups:
   - apiextensions.k8s.io
   resources:
@@ -97,17 +63,6 @@ rules:
   - rbac.authorization.k8s.io
   resources:
   - rolebindings
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - rbac.authorization.k8s.io
-  resources:
   - roles
   verbs:
   - create
@@ -121,57 +76,7 @@ rules:
   - tor.k8s.torproject.org
   resources:
   - onionbalancedservices
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - tor.k8s.torproject.org
-  resources:
-  - onionbalancedservices/finalizers
-  verbs:
-  - update
-- apiGroups:
-  - tor.k8s.torproject.org
-  resources:
-  - onionbalancedservices/status
-  verbs:
-  - get
-  - patch
-  - update
-- apiGroups:
-  - tor.k8s.torproject.org
-  resources:
   - onionservices
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - tor.k8s.torproject.org
-  resources:
-  - onionservices/finalizers
-  verbs:
-  - update
-- apiGroups:
-  - tor.k8s.torproject.org
-  resources:
-  - onionservices/status
-  verbs:
-  - get
-  - patch
-  - update
-- apiGroups:
-  - tor.k8s.torproject.org
-  resources:
   - tors
   verbs:
   - create
@@ -184,12 +89,16 @@ rules:
 - apiGroups:
   - tor.k8s.torproject.org
   resources:
+  - onionbalancedservices/finalizers
+  - onionservices/finalizers
   - tors/finalizers
   verbs:
   - update
 - apiGroups:
   - tor.k8s.torproject.org
   resources:
+  - onionbalancedservices/status
+  - onionservices/status
   - tors/status
   verbs:
   - get

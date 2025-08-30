@@ -21,14 +21,6 @@ import (
 	cfg "sigs.k8s.io/controller-runtime/pkg/config/v1alpha1"
 )
 
-// // ProjectConfigSpec defines the desired state of ProjectConfig
-// type ProjectConfigSpec struct {
-// }
-
-// // ProjectConfigStatus defines the observed state of ProjectConfig
-// type ProjectConfigStatus struct {
-// }
-
 // +kubebuilder:storageversion
 // +kubebuilder:object:root=true
 
@@ -69,14 +61,6 @@ type TorOnionbalanceManagerType struct {
 	// +kubebuilder:default:="quay.io/bugfest/tor-onionbalance-manager:latest"
 	Image string `json:"image,omitempty"`
 }
-
-// // +kubebuilder:object:root=true
-// // ProjectConfigList contains a list of OnionService
-// type ProjectConfigList struct {
-// 	metav1.TypeMeta `json:",inline"`
-// 	metav1.ListMeta `json:"metadata,omitempty"`
-// 	Items           []ProjectConfig `json:"items"`
-// }
 
 func init() {
 	SchemeBuilder.Register(&ProjectConfig{})

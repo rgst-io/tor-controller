@@ -5,7 +5,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	local "github.com/bugfest/tor-controller/agents/onionbalance/local"
+	local "github.com/rgst-io/tor-controller/agents/onionbalance/local"
 )
 
 // onionbalance-manager main.

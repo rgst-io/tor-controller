@@ -35,7 +35,7 @@ conventional_commits = true
 filter_unconventional = false
 # regex for preprocessing the commit messages
 commit_preprocessors = [
-    { pattern = '\((\w+\s)?#([0-9]+)\)', replace = "([#${2}](https://github.com/bugfest/tor-controller/issues/${2}))"},
+    { pattern = '\((\w+\s)?#([0-9]+)\)', replace = "([#${2}](https://github.com/rgst-io/tor-controller/issues/${2}))"},
 ]
 # regex for parsing and grouping commits
 commit_parsers = [

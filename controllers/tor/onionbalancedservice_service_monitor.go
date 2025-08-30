@@ -30,7 +30,7 @@ import (
 	monitoringv1 "github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring/v1"
 	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 
-	torv1alpha2 "github.com/bugfest/tor-controller/apis/tor/v1alpha2"
+	torv1alpha2 "github.com/rgst-io/tor-controller/apis/tor/v1alpha2"
 )
 
 func (r *OnionBalancedServiceReconciler) reconcileServiceMonitor(

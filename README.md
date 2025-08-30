@@ -4,10 +4,10 @@
   <img height="100" src="assets/web/logo.svg">
 </p>
 
-[![Build multiarch image - latest](https://github.com/bugfest/tor-controller/actions/workflows/main.yml/badge.svg)](https://github.com/bugfest/tor-controller/actions/workflows/main.yml)
-[![Build multiarch image - tag](https://github.com/bugfest/tor-controller/actions/workflows/main-tag.yml/badge.svg)](https://github.com/bugfest/tor-controller/actions/workflows/main-tag.yml)
-[![Release Charts](https://github.com/bugfest/tor-controller/actions/workflows/release.yml/badge.svg)](https://github.com/bugfest/tor-controller/actions/workflows/release.yml)
-[![pages-build-deployment](https://github.com/bugfest/tor-controller/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/bugfest/tor-controller/actions/workflows/pages/pages-build-deployment)
+[![Build multiarch image - latest](https://github.com/rgst-io/tor-controller/actions/workflows/main.yml/badge.svg)](https://github.com/rgst-io/tor-controller/actions/workflows/main.yml)
+[![Build multiarch image - tag](https://github.com/rgst-io/tor-controller/actions/workflows/main-tag.yml/badge.svg)](https://github.com/rgst-io/tor-controller/actions/workflows/main-tag.yml)
+[![Release Charts](https://github.com/rgst-io/tor-controller/actions/workflows/release.yml/badge.svg)](https://github.com/rgst-io/tor-controller/actions/workflows/release.yml)
+[![pages-build-deployment](https://github.com/rgst-io/tor-controller/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/rgst-io/tor-controller/actions/workflows/pages/pages-build-deployment)
 
 `Tor-controller` lets you define Tor instances in your k8s using a set of provided custom resource definitions (`tor`, `onion`, `onionha`).
 
@@ -18,7 +18,7 @@ Usage examples:
 - Deploy a Tor daemon that listens for socks connections so you can let your k8s applications fetch resources through the Tor network.
 - Run a `bridge`, `relay` or `exit` node
 - Expose your k8s service in the Tor network as onion service.
-  - If you want HA you can expose it with an onion balancer (allowing you to run up to 10 onion virtual services behind a single `.onion` address)  
+  - If you want HA you can expose it with an onion balancer (allowing you to run up to 10 onion virtual services behind a single `.onion` address)
   - Enable metrics and visualize them via prometheus/grafana
 
 **NOTE**: This project started as an exercise to update `kragniz`'s https://github.com/kragniz/. This version is a complete reimplementation.
@@ -71,8 +71,7 @@ Check [install section](#install) bellow for more information.
   - [Utils](#utils)
   - [Other projects](#other-projects)
 
-Changes
--------
+## Changes
 
 Full changelog: [CHANGELOG](CHANGELOG.md)
 
@@ -107,8 +106,7 @@ Full changelog: [CHANGELOG](CHANGELOG.md)
   - Tor & controllers running as non-root
   - Tor compiled with PoW anti-DoS protection
 
-Roadmap / TODO
---------------
+## Roadmap / TODO
 
 - Tor daemon management via socket (e.g: config reload)
 - Manage Tor Server fingerprinting (ed25519_master_id_secret_key, secret_id_key) and automatic family and nickname management
@@ -118,8 +116,7 @@ Roadmap / TODO
 - Tor-Istio plugin/extension to route pod egress traffic thru Tor
 - Automated Vanguards Tor Add-on deploy/setup
 
-Install
--------
+## Install
 
 Using helm (recommended):
 
@@ -140,8 +137,7 @@ Install tor-controller directly using the manifest (cluster-scoped):
 kubectl apply -f https://raw.githubusercontent.com/bugfest/tor-controller/master/hack/install.yaml
 ```
 
-Resources
----------
+## Resources
 
 | Name                  | Shortnames      | Api Version                     | Namespaced | Kind                 |
 | --------------------- | --------------- | ------------------------------- | :--------: | -------------------- |
@@ -150,19 +146,17 @@ Resources
 | onionbalancedservices | onionha,oha,obs | tor.k8s.torproject.org/v1alpha2 |    true    | OnionBalancedService |
 | projectconfigs        |                 | config.k8s.torproject.org/v2    |    true    | ProjectConfig        |
 
-***Tor***: Tor instance you can use to route traffic to/thru Tor network
+**_Tor_**: Tor instance you can use to route traffic to/thru Tor network
 
 **OnionService**: Exposes a set of k8s services using as a Tor Hidden Service. By default it generates a random .onion address
 
 **OnionBalancedService**: Exposes a set of k8s services using [Onionbalance](https://gitlab.torproject.org/tpo/onion-services/onionbalance.git). It creates multiple backends providing some sort of HA. Users connect to the OnionBalancedService address and the requests are managed by one of the registered backends.
 
-How to
-------
+## How to
 
 Some examples you can use to start using tor-controller in your cluster
 
-Quickstart with random onion address
-------------------------------------
+## Quickstart with random onion address
 
 TLDR
 
@@ -217,16 +211,14 @@ example-onion-service   cfoj4552cvq7fbge6k22qmkun3jl37oz273hndr7ktvoahnqg5kdnzqd
 This service should now be accessible from any tor client,
 for example [Tor Browser](https://www.torproject.org/projects/torbrowser.html.en):
 
-Onion service versions
-----------------------
+## Onion service versions
 
 The `spec.version` field specifies which onion protocol to use.
 Only v3 is supported.
 
 tor-controller defaults to using v3 if `spec.version` is not specified.
 
-Random service names
---------------------
+## Random service names
 
 If `spec.privateKeySecret` is not specified, tor-controller will start a service with a random name. The key-pair is stored in the same namespace as the tor-daemon, with the name `ONIONSERVICENAME-tor-secret`
 
@@ -244,11 +236,9 @@ data:
   privateKeyFile: PT0gZW...
   publicKey: ItIyeT+kH...
   publicKeyFile: PT0gZWQyNT...
-...
 ```
 
-Bring your own secret
----------------------
+## Bring your own secret
 
 Set `spec.privateKeySecret.name` to specify an existing secret. If you don't set `spec.privateKeySecret.key`, the controller expects it to have the following keys:
 
@@ -301,8 +291,7 @@ spec:
     key: mykeyname
 ```
 
-Enable Onion Service protection with Authorization Clients
-----------------------------------------------------------
+## Enable Onion Service protection with Authorization Clients
 
 (Available since v0.7.0)
 
@@ -341,8 +330,7 @@ A more complete example can be found at [hack/sample/onionservice-authorizedclie
 Check https://community.torproject.org/onion-services/advanced/client-auth/
 to learn how to create valid key pairs for client authorization.
 
-Custom settings for Tor daemon
-------------------------------
+## Custom settings for Tor daemon
 
 Tor Controller CRDs allows adding extra parameters that will be passed to the Tor daemon:
 
@@ -350,8 +338,7 @@ Tor Controller CRDs allows adding extra parameters that will be passed to the To
 - Onion Services: use `spec.extraConfig` field
 - Onion Balanced Services: use `spec.template.extraConfig` field
 
-Specifying Tor network bridges
--------------------------------
+## Specifying Tor network bridges
 
 Prerequisite: bridges information. You can get `obfs4` bridges visiting https://bridges.torproject.org/bridges/?transport=obfs4
 
@@ -375,8 +362,7 @@ spec:
     # ... other configurations
 ```
 
-Specify Pod Template Settings
------------------------------
+## Specify Pod Template Settings
 
 The `spec.template` field can be used to specify properties for the running tor-service pods.
 Use `spec.template.resources` to specify the compute resources required by the tor containers that will be created.
@@ -420,10 +406,9 @@ spec:
 | `spec.topologySpreadConstraints` | Add [Topology Spread Constraints](https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/).                                                                                      |
 | `resources`                      | Set [Resource Requirements](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#resource-requests-and-limits-of-pod-and-container) for the running containers.                    |
 
-OnionBalancedService Pod Template
----------------------------------
+## OnionBalancedService Pod Template
 
-In addition to creating backend `OnionServices`, a OnionBalancedService also creates a deployment that runs the Onion Balancer.  To modify the pod settings for the balancer service, you can specify the a `balancerTemplate` property in the `OnionBalancedServie` spec.
+In addition to creating backend `OnionServices`, a OnionBalancedService also creates a deployment that runs the Onion Balancer. To modify the pod settings for the balancer service, you can specify the a `balancerTemplate` property in the `OnionBalancedServie` spec.
 
 ```yaml
 apiVersion: tor.k8s.torproject.org/v1alpha2
@@ -462,8 +447,7 @@ spec:
         memory: 128Mi
 ```
 
-Using with nginx-ingress
-------------------------
+## Using with nginx-ingress
 
 **WARNING**: This example exposes the service to both clearnet (Internet) and Tor
 
@@ -501,8 +485,7 @@ spec:
 This can then be used in the same way any other ingress is. You can find a full
 example, with a default backend at [hack/sample/full-example.yaml](hack/sample/full-example.yaml)
 
-HA Onionbalance Hidden Services
--------------------------------
+## HA Onionbalance Hidden Services
 
 (Available since v0.4.0)
 
@@ -543,8 +526,7 @@ example-onionbalanced-service-obb-2   4r4n25aewayyupxby34bckljr5rn7j4xynagvqqgde
 
 **Note**: you can also the alias `onionha` or `obs` to interact with OnionBalancedServices resources. Example: `kubectl get onionha`
 
-Tor Instances
--------------
+## Tor Instances
 
 (Available since v0.6.1)
 
@@ -595,8 +577,7 @@ Other examples:
 echo $(kubectl get secret/example-tor-instance-full-tor-secret -o jsonpath='{.data.control}' | base64 -d)
 ```
 
-Service Monitors
-----------------
+## Service Monitors
 
 You can get Service Monitors created automatically for `Tor`, `OnionService` and `OnionBalancedService` objects setting `serviceMonitor` to `true`. It will be used by prometheus to scrape metrics.
 
@@ -633,8 +614,7 @@ tor-controller creates the following resources for each OnionService:
   generates tor config, signaling the tor daemon when it changes
 - rbac rules
 
-Builds
-------
+## Builds
 
 | Name                     | Type  | URL                                                         | Comment                    |
 | ------------------------ | :---: | ----------------------------------------------------------- | -------------------------- |
@@ -649,8 +629,7 @@ Dependencies:
 
 - tor-daemon-manager Dockerfile uses bugfest/tor image (built from source). It is built in a separate project to speed up the compilation: [https://github.com/bugfest/tor-docker](https://github.com/bugfest/tor-docker)
 
-Versions
---------
+## Versions
 
 | Helm Chart version | Tor-Controller version | Tor daemon | Pluggable transports |
 | ------------------ | ---------------------- | ---------- | -------------------- |
@@ -673,8 +652,7 @@ Versions
 | 0.1.16             | 0.10.0                 | 0.4.8.9    | Obfs4-0.0.14         |
 | 0.1.17             | 0.10.0                 | 0.4.8.9    | Obfs4-0.0.14         |
 
-References
-----------
+## References
 
 ## Documentation
 

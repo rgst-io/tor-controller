@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"text/template"
 
-	v1alpha2 "github.com/bugfest/tor-controller/apis/tor/v1alpha2"
 	"github.com/cockroachdb/errors"
+	v1alpha2 "github.com/rgst-io/tor-controller/apis/tor/v1alpha2"
 )
 
 const configFormat = `

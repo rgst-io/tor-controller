@@ -18,7 +18,7 @@ optional:
 # init
 
     # boilerplates
-    kubebuilder init --domain k8s.torproject.org --project-name tor-controller --repo github.com/bugfest/tor-controller --component-config
+    kubebuilder init --domain k8s.torproject.org --project-name tor-controller --repo github.com/rgst-io/tor-controller --component-config
 
     # We might need to support multiple groups
     kubebuilder edit --multigroup=true
@@ -37,15 +37,15 @@ optional:
     kubebuilder create webhook --group tor --version v1alpha2 --kind OnionService --conversion
 
     kubebuilder create config --name=tor --controller-image=quay.io/bugfest/tor-controller-manager:latest --output=hack/install.yaml
-    
-    # edit 
+
+    # edit
     # apis/tor/v1alpha1/onionservice_types.go
     # apis/tor/v1alpha2/onionservice_types.go
     # apis/tor/v1alpha2/onionbalancedservice_types.go
 
     # generate manifests
     make manifests
-    
+
     # install CRDs
     make install
 
@@ -88,7 +88,7 @@ To deploy in a test cluster
     docker buildx build --platform=linux/amd64,linux/arm64,linux/arm -f Dockerfile --tag quay.io/bugfest/tor-controller:latest .
     docker buildx build --platform=linux/amd64,linux/arm64,linux/arm -f Dockerfile.tor-daemon-manager --tag quay.io/bugfest/tor-daemon-manager:latest .
     docker buildx build --platform=linux/amd64,linux/arm64,linux/arm -f Dockerfile.tor-onionbalance-manager --tag quay.io/bugfest/tor-onionbalance-manager:latest .
-    
+
 # Helm
 
     # Update CRDs
@@ -114,7 +114,7 @@ To deploy in a test cluster
 1. Use controller's SA to impersonate its permissions
 
 ```shell
-cat <<EOF | kubectl apply -f - 
+cat <<EOF | kubectl apply -f -
 apiVersion: v1
 kind: Secret
 type: kubernetes.io/service-account-token

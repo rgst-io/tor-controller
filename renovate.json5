@@ -1,0 +1,3 @@
+{
+  extends: ["github>jaredallard/jaredallard:renovate.json5"]
+}

@@ -35,10 +35,10 @@ import (
 	monitoringv1 "github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring/v1"
 	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 
-	configv2 "github.com/bugfest/tor-controller/apis/config/v2"
-	torv1alpha1 "github.com/bugfest/tor-controller/apis/tor/v1alpha1"
-	torv1alpha2 "github.com/bugfest/tor-controller/apis/tor/v1alpha2"
-	torcontrollers "github.com/bugfest/tor-controller/controllers/tor"
+	configv2 "github.com/rgst-io/tor-controller/apis/config/v2"
+	torv1alpha1 "github.com/rgst-io/tor-controller/apis/tor/v1alpha1"
+	torv1alpha2 "github.com/rgst-io/tor-controller/apis/tor/v1alpha2"
+	torcontrollers "github.com/rgst-io/tor-controller/controllers/tor"
 	//+kubebuilder:scaffold:imports
 )
 
