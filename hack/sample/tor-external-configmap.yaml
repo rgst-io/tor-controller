@@ -12,7 +12,6 @@ spec:
       key: config2.conf
 
 ---
-
 apiVersion: v1
 kind: ConfigMap
 metadata:

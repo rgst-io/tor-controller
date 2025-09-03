@@ -6,40 +6,41 @@ Tor hidden services controller for kubernetes
 
 ## Values
 
-| Key | Type | Default | Description |
-|-----|------|---------|-------------|
-| affinity | object | `{}` |  |
-| daemon.image | object | `{"pullPolicy":"Always","repository":"quay.io/bugfest/tor-daemon","tag":""}` | tor-daemon image, it runs Tor client |
-| daemon.image.tag | string | `""` | Overrides the image tag whose default is the chart appVersion. |
-| fullnameOverride | string | `""` |  |
-| image | object | `{"pullPolicy":"Always","repository":"quay.io/bugfest/tor-controller","tag":""}` | tor-controller image, it watches onionservices objects |
-| image.tag | string | `""` | Overrides the image tag whose default is the chart appVersion. |
-| imagePullSecrets | list | `[]` |  |
-| kubeRbacProxy.image.pullPolicy | string | `"IfNotPresent"` |  |
-| kubeRbacProxy.image.repository | string | `"gcr.io/kubebuilder/kube-rbac-proxy"` |  |
-| kubeRbacProxy.image.tag | string | `"v0.8.0"` | Overrides the image tag whose default is the chart appVersion. |
-| kubeRbacProxy.resources | object | `{}` |  |
-| manager.image | object | `{"pullPolicy":"Always","repository":"quay.io/bugfest/tor-daemon-manager","tag":""}` | tor-daemon-manager image, it runs Tor client with manager |
-| manager.image.tag | string | `""` | Overrides the image tag whose default is the chart appVersion. |
-| nameOverride | string | `""` |  |
-| namespaced | bool | `false` | If enabled, permissions are restricted to the target Namespace |
-| nodeSelector | object | `{}` |  |
-| onionbalance.image | object | `{"pullPolicy":"Always","repository":"quay.io/bugfest/tor-onionbalance-manager","tag":""}` | tor-onionbalance-manager image, it runs Tor client |
-| onionbalance.image.tag | string | `""` | Overrides the image tag whose default is the chart appVersion. |
-| podAnnotations | object | `{}` |  |
-| podSecurityContext.runAsNonRoot | bool | `true` |  |
-| replicaCount | int | `1` | Daemonset replica count |
-| resources | object | `{}` |  |
-| securityContext.allowPrivilegeEscalation | bool | `false` |  |
-| securityContext.capabilities.drop[0] | string | `"ALL"` |  |
-| securityContext.runAsNonRoot | bool | `true` |  |
-| service.port | int | `8443` |  |
-| service.type | string | `"ClusterIP"` |  |
-| serviceAccount.annotations | object | `{}` | Annotations to add to the service account |
-| serviceAccount.create | bool | `true` | Specifies whether a service account should be created |
-| serviceAccount.name | string | `""` | The name of the service account to use. If not set and create is true, a name is generated using the fullname template |
-| tolerations | list | `[]` |  |
-| upgradeRollout | bool | `true` | Automatically rollout controller deployment after upgrade |
+| Key                                      | Type   | Default                                                                                    | Description                                                                                                            |
+| ---------------------------------------- | ------ | ------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------- |
+| affinity                                 | object | `{}`                                                                                       |                                                                                                                        |
+| daemon.image                             | object | `{"pullPolicy":"Always","repository":"quay.io/bugfest/tor-daemon","tag":""}`               | tor-daemon image, it runs Tor client                                                                                   |
+| daemon.image.tag                         | string | `""`                                                                                       | Overrides the image tag whose default is the chart appVersion.                                                         |
+| fullnameOverride                         | string | `""`                                                                                       |                                                                                                                        |
+| image                                    | object | `{"pullPolicy":"Always","repository":"quay.io/bugfest/tor-controller","tag":""}`           | tor-controller image, it watches onionservices objects                                                                 |
+| image.tag                                | string | `""`                                                                                       | Overrides the image tag whose default is the chart appVersion.                                                         |
+| imagePullSecrets                         | list   | `[]`                                                                                       |                                                                                                                        |
+| kubeRbacProxy.image.pullPolicy           | string | `"IfNotPresent"`                                                                           |                                                                                                                        |
+| kubeRbacProxy.image.repository           | string | `"gcr.io/kubebuilder/kube-rbac-proxy"`                                                     |                                                                                                                        |
+| kubeRbacProxy.image.tag                  | string | `"v0.8.0"`                                                                                 | Overrides the image tag whose default is the chart appVersion.                                                         |
+| kubeRbacProxy.resources                  | object | `{}`                                                                                       |                                                                                                                        |
+| manager.image                            | object | `{"pullPolicy":"Always","repository":"quay.io/bugfest/tor-daemon-manager","tag":""}`       | tor-daemon-manager image, it runs Tor client with manager                                                              |
+| manager.image.tag                        | string | `""`                                                                                       | Overrides the image tag whose default is the chart appVersion.                                                         |
+| nameOverride                             | string | `""`                                                                                       |                                                                                                                        |
+| namespaced                               | bool   | `false`                                                                                    | If enabled, permissions are restricted to the target Namespace                                                         |
+| nodeSelector                             | object | `{}`                                                                                       |                                                                                                                        |
+| onionbalance.image                       | object | `{"pullPolicy":"Always","repository":"quay.io/bugfest/tor-onionbalance-manager","tag":""}` | tor-onionbalance-manager image, it runs Tor client                                                                     |
+| onionbalance.image.tag                   | string | `""`                                                                                       | Overrides the image tag whose default is the chart appVersion.                                                         |
+| podAnnotations                           | object | `{}`                                                                                       |                                                                                                                        |
+| podSecurityContext.runAsNonRoot          | bool   | `true`                                                                                     |                                                                                                                        |
+| replicaCount                             | int    | `1`                                                                                        | Daemonset replica count                                                                                                |
+| resources                                | object | `{}`                                                                                       |                                                                                                                        |
+| securityContext.allowPrivilegeEscalation | bool   | `false`                                                                                    |                                                                                                                        |
+| securityContext.capabilities.drop[0]     | string | `"ALL"`                                                                                    |                                                                                                                        |
+| securityContext.runAsNonRoot             | bool   | `true`                                                                                     |                                                                                                                        |
+| service.port                             | int    | `8443`                                                                                     |                                                                                                                        |
+| service.type                             | string | `"ClusterIP"`                                                                              |                                                                                                                        |
+| serviceAccount.annotations               | object | `{}`                                                                                       | Annotations to add to the service account                                                                              |
+| serviceAccount.create                    | bool   | `true`                                                                                     | Specifies whether a service account should be created                                                                  |
+| serviceAccount.name                      | string | `""`                                                                                       | The name of the service account to use. If not set and create is true, a name is generated using the fullname template |
+| tolerations                              | list   | `[]`                                                                                       |                                                                                                                        |
+| upgradeRollout                           | bool   | `true`                                                                                     | Automatically rollout controller deployment after upgrade                                                              |
 
-----------------------------------------------
+---
+
 Autogenerated from chart metadata using [helm-docs v1.11.3](https://github.com/norwoodj/helm-docs/releases/v1.11.3)

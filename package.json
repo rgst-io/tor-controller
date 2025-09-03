@@ -1,0 +1,8 @@
+{
+	"name": "tor-controller",
+	"license": "Apache-2.0",
+	"private": true,
+	"devDependencies": {
+		"prettier": "^3.6.2"
+	}
+}

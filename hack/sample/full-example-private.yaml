@@ -15,10 +15,10 @@ spec:
         app: http-app
     spec:
       containers:
-      - name: http-app
-        image: quay.io/bugfest/echoserver:2.5
-        ports:
-        - containerPort: 8080
+        - name: http-app
+          image: quay.io/bugfest/echoserver:2.5
+          ports:
+            - containerPort: 8080
 ---
 apiVersion: v1
 kind: Service
@@ -28,9 +28,9 @@ metadata:
     app: http-app
 spec:
   ports:
-  - port: 8080
-    protocol: TCP
-    targetPort: 8080
+    - port: 8080
+      protocol: TCP
+      targetPort: 8080
   selector:
     app: http-app
 ---
@@ -56,4 +56,4 @@ spec:
           port:
             number: 8080
   extraConfig: |
-      HiddenServiceEnableIntroDoSDefense 1
+    HiddenServiceEnableIntroDoSDefense 1

@@ -37,4 +37,5 @@ run = [
 	"controller-gen object:headerFile=\"hack/boilerplate.go.txt\" paths=\"./...\"",
 	"controller-gen rbac:roleName=manager-role crd:maxDescLen=80 webhook paths=\"./...\" output:crd:artifacts:config=config/crd/bases",
 	"./hack/remove-containers-requirement.sh config/crd/bases",
+	"mise run fmt",
 ]

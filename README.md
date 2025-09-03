@@ -450,8 +450,7 @@ metadata:
 spec:
   replicas: 2
   template:
-    spec:
-      ...
+    spec: ...
 ```
 
 Apply it:

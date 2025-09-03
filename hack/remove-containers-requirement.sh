@@ -1,4 +1,4 @@
-#!/usr/bin/env bash 
+#!/usr/bin/env bash
 set -euo pipefail
 
 CRD_DIR="$1"

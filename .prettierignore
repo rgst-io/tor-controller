@@ -1,0 +1,2 @@
+charts/tor-controller/templates/**/*.yaml
+charts/tor-controller/templates/**/*.tpl
