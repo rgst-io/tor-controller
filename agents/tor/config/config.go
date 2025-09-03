@@ -2,9 +2,9 @@ package config
 
 import (
 	"bytes"
+	"fmt"
 	"text/template"
 
-	"github.com/cockroachdb/errors"
 	v1alpha2 "github.com/rgst-io/tor-controller/apis/tor/v1alpha2"
 )
 
@@ -96,7 +96,7 @@ func TorConfigForService(onion *v1alpha2.OnionService) (string, error) {
 
 	err := configTemplate.Execute(&tmp, s)
 	if err != nil {
-		return "", errors.Wrap(err, "Error while Marshaling. %v")
+		return "", fmt.Errorf("Error while Marshaling. %v: %w", err)
 	}
 
 	return tmp.String(), nil
@@ -110,7 +110,7 @@ func ObConfigForService(onion *v1alpha2.OnionService) (string, error) {
 
 	err := oBconfigTemplate.Execute(&tmp, s)
 	if err != nil {
-		return "", errors.Wrap(err, "Error while Marshaling. %v")
+		return "", fmt.Errorf("Error while Marshaling. %v: %w", err)
 	}
 
 	return tmp.String(), nil

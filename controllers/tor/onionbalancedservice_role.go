@@ -18,6 +18,7 @@ package tor
 
 import (
 	"context"
+	"fmt"
 
 	rbacv1 "k8s.io/api/rbac/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
@@ -27,7 +28,8 @@ import (
 	"k8s.io/apimachinery/pkg/util/runtime"
 	k8slog "sigs.k8s.io/controller-runtime/pkg/log"
 
-	"github.com/cockroachdb/errors"
+	"errors"
+
 	torv1alpha2 "github.com/rgst-io/tor-controller/apis/tor/v1alpha2"
 )
 
@@ -53,12 +55,12 @@ func (r *OnionBalancedServiceReconciler) reconcileRole(ctx context.Context, onio
 	if apierrors.IsNotFound(err) {
 		err := r.Create(ctx, newRole)
 		if err != nil {
-			return errors.Wrapf(err, "failed to create Role %#v", newRole)
+			return fmt.Errorf("failed to create Role %#v: %w", newRole, err)
 		}
 
 		role = *newRole
 	} else if err != nil {
-		return errors.Wrapf(err, "failed to get Role %s", roleName)
+		return fmt.Errorf("failed to get Role %s: %w", roleName, err)
 	}
 
 	if !metav1.IsControlledBy(&role.ObjectMeta, onionBalancedService) {
@@ -73,7 +75,7 @@ func (r *OnionBalancedServiceReconciler) reconcileRole(ctx context.Context, onio
 	if !roleEqual(&role, newRole) {
 		err := r.Update(ctx, newRole)
 		if err != nil {
-			return errors.Wrapf(err, "failed to update Role %#v", newRole)
+			return fmt.Errorf("failed to update Role %#v: %w", newRole, err)
 		}
 	}
 

@@ -1,9 +1,10 @@
 package config
 
 import (
+	"fmt"
+
 	log "github.com/sirupsen/logrus"
 
-	"github.com/cockroachdb/errors"
 	v1alpha2 "github.com/rgst-io/tor-controller/apis/tor/v1alpha2"
 	"gopkg.in/yaml.v2"
 )
@@ -44,7 +45,7 @@ func OnionBalanceConfigForService(onion *v1alpha2.OnionBalancedService) (string,
 	if err != nil {
 		log.Printf("Error while Marshaling. %v", err)
 
-		return "", errors.Wrap(err, "Error while Marshaling. %v")
+		return "", fmt.Errorf("Error while Marshaling. %v: %w", err)
 	}
 
 	return string(yamlData), nil

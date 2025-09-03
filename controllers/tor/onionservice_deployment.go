@@ -18,6 +18,7 @@ package tor
 
 import (
 	"context"
+	"fmt"
 
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -28,7 +29,6 @@ import (
 	"k8s.io/apimachinery/pkg/util/runtime"
 	k8slog "sigs.k8s.io/controller-runtime/pkg/log"
 
-	"github.com/cockroachdb/errors"
 	configv2 "github.com/rgst-io/tor-controller/apis/config/v2"
 	torv1alpha2 "github.com/rgst-io/tor-controller/apis/tor/v1alpha2"
 )
@@ -43,7 +43,7 @@ func (r *OnionServiceReconciler) reconcileDeployment(ctx context.Context, onionS
 		// We choose to absorb the error here as the worker would requeue the
 		// resource otherwise. Instead, the next time the resource is updated
 		// the resource will be queued again.
-		runtime.HandleError(errors.Errorf("%s/%s: deployment name must be specified", onionService.Namespace, onionService.Name))
+		runtime.HandleError(fmt.Errorf("%s/%s: deployment name must be specified", onionService.Namespace, onionService.Name))
 
 		return nil
 	}
@@ -58,7 +58,7 @@ func (r *OnionServiceReconciler) reconcileDeployment(ctx context.Context, onionS
 	if apierrors.IsNotFound(err) {
 		err := r.Create(ctx, newDeployment)
 		if err != nil {
-			return errors.Errorf("failed to create Deployment %#v", newDeployment)
+			return fmt.Errorf("failed to create Deployment %#v", newDeployment)
 		}
 
 		deployment = *newDeployment
@@ -66,7 +66,7 @@ func (r *OnionServiceReconciler) reconcileDeployment(ctx context.Context, onionS
 		// If an error occurs during Get/Create, we'll requeue the item so we can
 		// attempt processing again later. This could have been caused by a
 		// temporary network failure, or any other transient reason.
-		return errors.Errorf("failed to get Deployment %s/%s", namespace, deploymentName)
+		return fmt.Errorf("failed to get Deployment %s/%s", namespace, deploymentName)
 	}
 
 	// If the Deployment is not controlled by this Foo resource, we should log
@@ -83,7 +83,7 @@ func (r *OnionServiceReconciler) reconcileDeployment(ctx context.Context, onionS
 	if !deploymentEqual(&deployment, newDeployment) {
 		err := r.Update(ctx, newDeployment)
 		if err != nil {
-			return errors.Errorf("filed to update Deployment %#v", newDeployment)
+			return fmt.Errorf("filed to update Deployment %#v", newDeployment)
 		}
 	}
 

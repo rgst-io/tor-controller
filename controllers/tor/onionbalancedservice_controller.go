@@ -18,6 +18,7 @@ package tor
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	corev1 "k8s.io/api/core/v1"
@@ -28,8 +29,6 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	k8slog "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/predicate"
-
-	"github.com/cockroachdb/errors"
 
 	configv2 "github.com/rgst-io/tor-controller/apis/config/v2"
 	torv1alpha2 "github.com/rgst-io/tor-controller/apis/tor/v1alpha2"
@@ -83,7 +82,7 @@ func (r *OnionBalancedServiceReconciler) Reconcile(ctx context.Context, req ctrl
 		// we'll ignore not-found errors, since they can't be fixed by an immediate
 		// requeue (we'll need to wait for a new notification), and we can get them
 		// on deleted requests.
-		return ctrl.Result{}, errors.Wrap(client.IgnoreNotFound(err), "unable to fetch OnionBalancedService")
+		return ctrl.Result{}, fmt.Errorf("unable to fetch OnionBalancedService: %w", client.IgnoreNotFound(err))
 	}
 
 	namespace := OnionBalancedService.Namespace
@@ -154,7 +153,7 @@ func (r *OnionBalancedServiceReconciler) Reconcile(ctx context.Context, req ctrl
 	case apierrors.IsNotFound(err):
 		clusterIP = defaultClusterIP
 	case err != nil:
-		return ctrl.Result{}, errors.Wrap(err, "unable to get service")
+		return ctrl.Result{}, fmt.Errorf("unable to get service: %w", err)
 	default:
 		clusterIP = service.Spec.ClusterIP
 	}
@@ -189,7 +188,7 @@ func (r *OnionBalancedServiceReconciler) Reconcile(ctx context.Context, req ctrl
 	if err := r.Status().Update(ctx, OnionBalancedServiceCopy); err != nil {
 		logger.Error(err, "unable to update OnionBalancedService status")
 
-		return ctrl.Result{}, errors.Wrap(err, "unable to update OnionBalancedService status")
+		return ctrl.Result{}, fmt.Errorf("unable to update OnionBalancedService status: %w", err)
 	}
 
 	if !OnionBalancedServiceCopy.IsSynced() {
@@ -211,7 +210,7 @@ func (r *OnionBalancedServiceReconciler) SetupWithManager(mgr ctrl.Manager) erro
 		WithEventFilter(pred).
 		Complete(r)
 	if err != nil {
-		return errors.Wrap(err, "unable to create OnionBalancedService controller")
+		return fmt.Errorf("unable to create OnionBalancedService controller: %w", err)
 	}
 
 	return nil

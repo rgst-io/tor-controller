@@ -19,6 +19,7 @@ package tor
 import (
 	"bytes"
 	"context"
+	"fmt"
 	"strings"
 	"text/template"
 
@@ -30,7 +31,8 @@ import (
 	"k8s.io/apimachinery/pkg/util/runtime"
 	k8slog "sigs.k8s.io/controller-runtime/pkg/log"
 
-	"github.com/cockroachdb/errors"
+	"errors"
+
 	torv1alpha2 "github.com/rgst-io/tor-controller/apis/tor/v1alpha2"
 )
 
@@ -127,12 +129,12 @@ func (r *Reconciler) reconcileConfigMap(ctx context.Context, tor *torv1alpha2.To
 	if apierrors.IsNotFound(err) {
 		err := r.Create(ctx, newConfigMap)
 		if err != nil {
-			return errors.Wrapf(err, "failed to create configmap %s/%s", namespace, configMapName)
+			return fmt.Errorf("failed to create configmap %s/%s: %w", namespace, configMapName, err)
 		}
 
 		configmap = *newConfigMap
 	} else if err != nil {
-		return errors.Wrapf(err, "failed to get configmap %s/%s", namespace, configMapName)
+		return fmt.Errorf("failed to get configmap %s/%s: %w", namespace, configMapName, err)
 	}
 
 	if !metav1.IsControlledBy(&configmap.ObjectMeta, tor) {

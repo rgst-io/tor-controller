@@ -1,10 +1,9 @@
 package local
 
 import (
+	"fmt"
 	"os"
 	"time"
-
-	"github.com/cockroachdb/errors"
 
 	log "github.com/sirupsen/logrus"
 
@@ -66,7 +65,7 @@ func (c *Controller) sync(key string) error {
 	if err != nil {
 		log.Errorf("Fetching object with key %s from store failed with %v", key, err)
 
-		return errors.Wrapf(err, "fetching object with key %s from store failed", key)
+		return fmt.Errorf("fetching object with key %s from store failed: %w", key, err)
 	}
 
 	if !exists {
@@ -81,21 +80,21 @@ func (c *Controller) sync(key string) error {
 	if err != nil {
 		log.Errorf("Error in parseonionBalancedService: %s", err)
 
-		return errors.Wrapf(err, "error in parseonionBalancedService")
+		return fmt.Errorf("error in parseonionBalancedService: %w", err)
 	}
 
 	torConfig, err := config.OnionBalanceConfigForService(&onionBalancedService)
 	if err != nil {
 		log.Errorf("Generating config failed with %v", err)
 
-		return errors.Wrapf(err, "generating config failed")
+		return fmt.Errorf("generating config failed: %w", err)
 	}
 
 	torfile, err := os.ReadFile("/run/onionbalance/config.yaml")
 	if err != nil && !os.IsNotExist(err) {
 		log.Errorf("Failed to read config file: %v", err)
 
-		return errors.Wrapf(err, "failed to read config file")
+		return fmt.Errorf("failed to read config file: %w", err)
 	}
 
 	if string(torfile) != torConfig {
@@ -106,7 +105,7 @@ func (c *Controller) sync(key string) error {
 		if err != nil {
 			log.Errorf("Writing config failed with %v", err)
 
-			return errors.Wrapf(err, "writing config failed")
+			return fmt.Errorf("writing config failed: %w", err)
 		}
 
 		c.localManager.daemon.Reload()
@@ -157,7 +156,7 @@ func (c *Controller) Run(threadiness int, stopCh chan struct{}) {
 
 	// Wait for all involved caches to be synced, before processing items from the queue is started
 	if !cache.WaitForCacheSync(stopCh, c.informer.HasSynced) {
-		runtime.HandleError(errors.New("timed out waiting for caches to sync"))
+		runtime.HandleError(fmt.Errorf("timed out waiting for caches to sync"))
 
 		return
 	}

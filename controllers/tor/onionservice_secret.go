@@ -18,6 +18,7 @@ package tor
 
 import (
 	"context"
+	"fmt"
 
 	corev1 "k8s.io/api/core/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
@@ -27,7 +28,8 @@ import (
 	"k8s.io/apimachinery/pkg/util/runtime"
 	k8slog "sigs.k8s.io/controller-runtime/pkg/log"
 
-	"github.com/cockroachdb/errors"
+	"errors"
+
 	torv1alpha2 "github.com/rgst-io/tor-controller/apis/tor/v1alpha2"
 )
 
@@ -53,12 +55,12 @@ func (r *OnionServiceReconciler) reconcileSecret(ctx context.Context, onionServi
 	if apierrors.IsNotFound(err) {
 		err := r.Create(ctx, newSecret)
 		if err != nil {
-			return errors.Wrap(err, "failed to create secret")
+			return fmt.Errorf("failed to create secret: %w", err)
 		}
 
 		secret = *newSecret
 	} else if err != nil {
-		return errors.Wrap(err, "failed to get secret")
+		return fmt.Errorf("failed to get secret: %w", err)
 	}
 
 	if !metav1.IsControlledBy(&secret.ObjectMeta, onionService) {

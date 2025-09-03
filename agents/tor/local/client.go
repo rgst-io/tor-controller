@@ -3,12 +3,13 @@ package local
 import (
 	"context"
 	"flag"
+	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
-	"github.com/cockroachdb/errors"
+	"errors"
 
 	log "github.com/sirupsen/logrus"
 
@@ -92,7 +93,7 @@ func (manager *Manager) Run() error {
 	}
 
 	if err := utilerrors.NewAggregate(runErrors); err != nil {
-		return errors.Wrap(err, "error parsing flags")
+		return fmt.Errorf("error parsing flags: %w", err)
 	}
 
 	// listen to signals
@@ -156,7 +157,7 @@ func GetDynamicInformer(resourceType, namespace string) (informers.GenericInform
 	// Grab a dynamic interface that we can create informers from
 	dynamicConfig, err := dynamic.NewForConfig(cfg)
 	if err != nil {
-		return nil, errors.Wrap(err, "error creating dynamic client")
+		return nil, fmt.Errorf("error creating dynamic client: %w", err)
 	}
 
 	// Create a factory object that can generate informers for resource types
@@ -191,7 +192,7 @@ func parseOnionService(obj interface{}) (torv1alpha2.OnionService, error) {
 		log.Println("could not convert obj to OnionService")
 		log.Print(err)
 
-		return service, errors.Wrap(err, "could not convert obj to OnionService")
+		return service, fmt.Errorf("could not convert obj to OnionService: %w", err)
 	}
 
 	return service, nil

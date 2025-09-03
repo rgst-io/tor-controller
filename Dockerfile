@@ -1,8 +1,7 @@
-# Build the manager binary
-FROM --platform=$BUILDPLATFORM docker.io/library/golang:1.24 AS builder
+ARG GO_VERSION
+FROM --platform=$BUILDPLATFORM docker.io/library/golang:${GO_VERSION} AS builder
 
 WORKDIR /src
-
 COPY . /src
 
 # Build
@@ -14,7 +13,6 @@ RUN --mount=type=cache,target=/root/.cache/go-build \
 # Use distroless as minimal base image to package the manager binary
 # Refer to https://github.com/GoogleContainerTools/distroless for more details
 FROM gcr.io/distroless/static:nonroot
-
 
 WORKDIR /app
 COPY --from=builder /out/manager /app

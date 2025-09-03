@@ -18,6 +18,7 @@ package tor
 
 import (
 	"context"
+	"fmt"
 
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
@@ -28,7 +29,6 @@ import (
 
 	corev1 "k8s.io/api/core/v1"
 
-	"github.com/cockroachdb/errors"
 	configv2 "github.com/rgst-io/tor-controller/apis/config/v2"
 	torv1alpha2 "github.com/rgst-io/tor-controller/apis/tor/v1alpha2"
 )
@@ -67,7 +67,7 @@ func (r *Reconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Resu
 		// we'll ignore not-found errors, since they can't be fixed by an immediate
 		// requeue (we'll need to wait for a new notification), and we can get them
 		// on deleted requests.
-		return ctrl.Result{}, errors.Wrap(client.IgnoreNotFound(err), "unable to fetch Tor")
+		return ctrl.Result{}, fmt.Errorf("unable to fetch Tor: %w", client.IgnoreNotFound(err))
 	}
 
 	namespace := tor.Namespace
@@ -129,7 +129,7 @@ func (r *Reconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Resu
 	if err := r.Get(ctx, types.NamespacedName{Name: instanceName, Namespace: namespace}, &service); err != nil {
 		logger.Error(err, "unable to get service")
 
-		return ctrl.Result{}, errors.Wrap(err, "unable to get service")
+		return ctrl.Result{}, fmt.Errorf("unable to get service: %w", err)
 	}
 
 	torCopy.Status.Config = "updateme"
@@ -137,7 +137,7 @@ func (r *Reconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Resu
 	if err := r.Status().Update(ctx, torCopy); err != nil {
 		logger.Error(err, "unable to update Tor status")
 
-		return ctrl.Result{}, errors.Wrap(err, "unable to update Tor status")
+		return ctrl.Result{}, fmt.Errorf("unable to update Tor status: %w", err)
 	}
 
 	return ctrl.Result{}, nil
@@ -152,7 +152,7 @@ func (r *Reconciler) SetupWithManager(mgr ctrl.Manager) error {
 		WithEventFilter(pred).
 		Complete(r)
 	if err != nil {
-		return errors.Wrap(err, "unable to create controller")
+		return fmt.Errorf("unable to create controller: %w", err)
 	}
 
 	return nil

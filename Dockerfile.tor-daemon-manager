@@ -1,6 +1,4 @@
-ARG TOR_VERSION="0.4.8.9-r1"
-ARG TOR_IMAGE="quay.io/bugfest/tor"
-
+ARG GO_VERSION
 FROM --platform=$BUILDPLATFORM docker.io/library/golang:1.24 AS builder
 
 WORKDIR /src
@@ -14,8 +12,5 @@ RUN --mount=type=cache,target=/root/.cache/go-build \
     CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH go build -a -ldflags="-s -w" -o /out/tor-local-manager ./agents/tor/main.go
 
 FROM ghcr.io/rgst-io/tor-controller/tor AS tor
-
-RUN mkdir -p /app
-COPY --from=builder --chmod=0555 /out/tor-local-manager /app
-
+COPY --from=builder --chmod=0555 /out/tor-local-manager /usr/bin/
 ENTRYPOINT ["/app/tor-local-manager"]

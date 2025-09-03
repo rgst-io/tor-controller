@@ -18,6 +18,7 @@ package tor
 
 import (
 	"context"
+	"fmt"
 
 	corev1 "k8s.io/api/core/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
@@ -28,7 +29,8 @@ import (
 	"k8s.io/apimachinery/pkg/util/runtime"
 	k8slog "sigs.k8s.io/controller-runtime/pkg/log"
 
-	"github.com/cockroachdb/errors"
+	"errors"
+
 	torv1alpha2 "github.com/rgst-io/tor-controller/apis/tor/v1alpha2"
 )
 
@@ -60,12 +62,12 @@ func (r *Reconciler) reconcileService(ctx context.Context, tor *torv1alpha2.Tor)
 
 		err := r.Create(ctx, newService)
 		if err != nil {
-			return errors.Wrapf(err, "failed to create Service %#v", newService)
+			return fmt.Errorf("failed to create Service %#v: %w", newService, err)
 		}
 
 		service = *newService
 	} else if err != nil {
-		return errors.Wrapf(err, "failed to get Service %s", serviceName)
+		return fmt.Errorf("failed to get Service %s: %w", serviceName, err)
 	}
 
 	if !metav1.IsControlledBy(&service.ObjectMeta, tor) {
@@ -80,7 +82,7 @@ func (r *Reconciler) reconcileService(ctx context.Context, tor *torv1alpha2.Tor)
 	if !serviceEqual(&service, newService) {
 		err := r.Update(ctx, newService)
 		if err != nil {
-			return errors.Wrapf(err, "failed to update Service %#v", newService)
+			return fmt.Errorf("failed to update Service %#v: %w", newService, err)
 		}
 	}
 

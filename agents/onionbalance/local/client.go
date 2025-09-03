@@ -3,6 +3,7 @@ package local
 import (
 	"context"
 	"flag"
+	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
@@ -24,7 +25,7 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
-	"github.com/cockroachdb/errors"
+	"errors"
 
 	onionbalancedaemon "github.com/rgst-io/tor-controller/agents/onionbalance/onionbalancedaemon"
 	torv1alpha2 "github.com/rgst-io/tor-controller/apis/tor/v1alpha2"
@@ -150,7 +151,7 @@ func GetDynamicInformer(resourceType, namespace string) (informers.GenericInform
 	// Grab a dynamic interface that we can create informers from
 	dynamicConfig, err := dynamic.NewForConfig(cfg)
 	if err != nil {
-		return nil, errors.Wrap(err, "could not create dynamic client")
+		return nil, fmt.Errorf("could not create dynamic client: %w", err)
 	}
 	// Create a factory object that can generate informers for resource types
 
@@ -186,7 +187,7 @@ func parseOnionBalancedService(obj interface{}) (torv1alpha2.OnionBalancedServic
 		log.Println("could not convert obj to onionBalancedService")
 		log.Print(err)
 
-		return onionBalancedService, errors.Wrap(err, "could not convert obj to onionBalancedService")
+		return onionBalancedService, fmt.Errorf("could not convert obj to onionBalancedService: %w", err)
 	}
 
 	return onionBalancedService, nil

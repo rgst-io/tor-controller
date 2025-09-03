@@ -29,7 +29,6 @@ import (
 	"k8s.io/apimachinery/pkg/util/runtime"
 	k8slog "sigs.k8s.io/controller-runtime/pkg/log"
 
-	"github.com/cockroachdb/errors"
 	configv2 "github.com/rgst-io/tor-controller/apis/config/v2"
 	torv1alpha2 "github.com/rgst-io/tor-controller/apis/tor/v1alpha2"
 )
@@ -44,7 +43,7 @@ func (r *Reconciler) reconcileDeployment(ctx context.Context, tor *torv1alpha2.T
 		// We choose to absorb the error here as the worker would requeue the
 		// resource otherwise. Instead, the next time the resource is updated
 		// the resource will be queued again.
-		runtime.HandleError(errors.Newf("%s/%s: deployment name must be specified", tor.Namespace, tor.Name))
+		runtime.HandleError(fmt.Errorf("%s/%s: deployment name must be specified", tor.Namespace, tor.Name))
 
 		return nil
 	}
@@ -59,7 +58,7 @@ func (r *Reconciler) reconcileDeployment(ctx context.Context, tor *torv1alpha2.T
 	if apierrors.IsNotFound(err) {
 		err := r.Create(ctx, newDeployment)
 		if err != nil {
-			return errors.Wrapf(err, "failed to create Deployment %s/%s", namespace, deploymentName)
+			return fmt.Errorf("failed to create Deployment %s/%s: %w", namespace, deploymentName, err)
 		}
 
 		deployment = *newDeployment
@@ -67,7 +66,7 @@ func (r *Reconciler) reconcileDeployment(ctx context.Context, tor *torv1alpha2.T
 		// If an error occurs during Get/Create, we'll requeue the item so we can
 		// attempt processing again later. This could have been caused by a
 		// temporary network failure, or any other transient reason.
-		return errors.Wrapf(err, "failed to get Deployment %s/%s", namespace, deploymentName)
+		return fmt.Errorf("failed to get Deployment %s/%s: %w", namespace, deploymentName, err)
 	}
 
 	// If the Deployment is not controlled by this Foo resource, we should log
@@ -84,7 +83,7 @@ func (r *Reconciler) reconcileDeployment(ctx context.Context, tor *torv1alpha2.T
 	if !deploymentEqual(&deployment, newDeployment) {
 		err := r.Update(ctx, newDeployment)
 		if err != nil {
-			return errors.Wrapf(err, "failed to update Deployment %s/%s", namespace, deploymentName)
+			return fmt.Errorf("failed to update Deployment %s/%s: %w", namespace, deploymentName, err)
 		}
 	}
 

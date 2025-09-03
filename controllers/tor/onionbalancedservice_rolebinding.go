@@ -18,6 +18,7 @@ package tor
 
 import (
 	"context"
+	"fmt"
 	"strings"
 
 	rbacv1 "k8s.io/api/rbac/v1"
@@ -28,7 +29,8 @@ import (
 	"k8s.io/apimachinery/pkg/util/runtime"
 	k8slog "sigs.k8s.io/controller-runtime/pkg/log"
 
-	"github.com/cockroachdb/errors"
+	"errors"
+
 	torv1alpha2 "github.com/rgst-io/tor-controller/apis/tor/v1alpha2"
 )
 
@@ -54,12 +56,12 @@ func (r *OnionBalancedServiceReconciler) reconcileRolebinding(ctx context.Contex
 	if apierrors.IsNotFound(err) {
 		err := r.Create(ctx, newRolebinding)
 		if err != nil {
-			return errors.Wrap(err, "failed to create Rolebinding")
+			return fmt.Errorf("failed to create Rolebinding: %w", err)
 		}
 
 		roleBinding = *newRolebinding
 	} else if err != nil {
-		return errors.Wrap(err, "failed to get Rolebinding")
+		return fmt.Errorf("failed to get Rolebinding: %w", err)
 	}
 
 	if !metav1.IsControlledBy(&roleBinding.ObjectMeta, onionBalancedService) {
@@ -74,7 +76,7 @@ func (r *OnionBalancedServiceReconciler) reconcileRolebinding(ctx context.Contex
 	if !rolebindingEqual(&roleBinding, newRolebinding) {
 		err := r.Update(ctx, newRolebinding)
 		if err != nil {
-			return errors.Wrapf(err, "filed to update Rolebinding %#v", newRolebinding)
+			return fmt.Errorf("filed to update Rolebinding %#v: %w", newRolebinding, err)
 		}
 	}
 

@@ -18,6 +18,7 @@ package tor
 
 import (
 	"context"
+	"fmt"
 
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -27,8 +28,6 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/apimachinery/pkg/util/runtime"
 	k8slog "sigs.k8s.io/controller-runtime/pkg/log"
-
-	"github.com/cockroachdb/errors"
 
 	configv2 "github.com/rgst-io/tor-controller/apis/config/v2"
 	torv1alpha2 "github.com/rgst-io/tor-controller/apis/tor/v1alpha2"
@@ -55,7 +54,7 @@ func (r *OnionBalancedServiceReconciler) reconcileDeployment(ctx context.Context
 		// We choose to absorb the error here as the worker would requeue the
 		// resource otherwise. Instead, the next time the resource is updated
 		// the resource will be queued again.
-		runtime.HandleError(errors.Errorf("%s/%s: deployment name must be specified", onionBalancedService.Namespace, onionBalancedService.Name))
+		runtime.HandleError(fmt.Errorf("%s/%s: deployment name must be specified", onionBalancedService.Namespace, onionBalancedService.Name))
 
 		return nil
 	}
@@ -72,7 +71,7 @@ func (r *OnionBalancedServiceReconciler) reconcileDeployment(ctx context.Context
 	if apierrors.IsNotFound(err) {
 		err := r.Create(ctx, newDeployment)
 		if err != nil {
-			return errors.Wrapf(err, "failed to create Deployment %#v", newDeployment)
+			return fmt.Errorf("failed to create Deployment %#v: %w", newDeployment, err)
 		}
 
 		deployment = *newDeployment
@@ -80,7 +79,7 @@ func (r *OnionBalancedServiceReconciler) reconcileDeployment(ctx context.Context
 		// If an error occurs during Get/Create, we'll requeue the item so we can
 		// attempt processing again later. This could have been caused by a
 		// temporary network failure, or any other transient reason.
-		return errors.Wrapf(err, "failed to get Deployment %s", deploymentName)
+		return fmt.Errorf("failed to get Deployment %s: %w", deploymentName, err)
 	}
 
 	// If the Deployment is not controlled by this Foo resource, we should log
@@ -97,7 +96,7 @@ func (r *OnionBalancedServiceReconciler) reconcileDeployment(ctx context.Context
 	if !deploymentEqual(&deployment, newDeployment) {
 		err := r.Update(ctx, newDeployment)
 		if err != nil {
-			return errors.Wrapf(err, "failed to update Deployment %#v", newDeployment)
+			return fmt.Errorf("failed to update Deployment %#v: %w", newDeployment, err)
 		}
 	}
 

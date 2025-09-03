@@ -101,7 +101,7 @@ func main() {
 	// Setup namespace if running in namespaced mode
 	if ctrlConfig.Namespace != "" {
 		setupLog.Info("Namespaced mode. Namespace=" + ctrlConfig.Namespace)
-		options.Namespace = ctrlConfig.Namespace
+		options.LeaderElectionNamespace = ctrlConfig.Namespace
 	}
 
 	mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), options)

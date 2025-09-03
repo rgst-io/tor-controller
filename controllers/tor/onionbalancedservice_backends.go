@@ -18,6 +18,7 @@ package tor
 
 import (
 	"context"
+	"fmt"
 
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -25,8 +26,6 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/apimachinery/pkg/util/runtime"
 	k8slog "sigs.k8s.io/controller-runtime/pkg/log"
-
-	"github.com/cockroachdb/errors"
 
 	configv2 "github.com/rgst-io/tor-controller/apis/config/v2"
 	torv1alpha2 "github.com/rgst-io/tor-controller/apis/tor/v1alpha2"
@@ -56,7 +55,7 @@ func (r *OnionBalancedServiceReconciler) reconcileBackend(ctx context.Context, o
 		// We choose to absorb the error here as the worker would requeue the
 		// resource otherwise. Instead, the next time the resource is updated
 		// the resource will be queued again.
-		runtime.HandleError(errors.Errorf("%s/%s: onionService name must be specified", onionBalancedService.Namespace, onionBalancedService.Name))
+		runtime.HandleError(fmt.Errorf("%s/%s: onionService name must be specified", onionBalancedService.Namespace, onionBalancedService.Name))
 
 		//nolint:nilnil // as expected
 		return nil, nil
@@ -67,7 +66,7 @@ func (r *OnionBalancedServiceReconciler) reconcileBackend(ctx context.Context, o
 
 	// We need a master address
 	if onionBalancedService.Status.Hostname == "" {
-		return nil, errors.Errorf("OnionBalancedService Hostname is not set")
+		return nil, fmt.Errorf("OnionBalancedService Hostname is not set")
 	}
 
 	// If the onionService doesn't exist, we'll create it
@@ -77,7 +76,7 @@ func (r *OnionBalancedServiceReconciler) reconcileBackend(ctx context.Context, o
 	if apierrors.IsNotFound(err) {
 		err := r.Create(ctx, newOnionServiceBackend)
 		if err != nil {
-			return nil, errors.Wrap(err, "unable to create onionServiceBackend")
+			return nil, fmt.Errorf("unable to create onionServiceBackend: %w", err)
 		}
 
 		onionServiceBackend = *newOnionServiceBackend
@@ -85,7 +84,7 @@ func (r *OnionBalancedServiceReconciler) reconcileBackend(ctx context.Context, o
 		// If an error occurs during Get/Create, we'll requeue the item so we can
 		// attempt processing again later. This could have been caused by a
 		// temporary network failure, or any other transient reason.
-		return nil, errors.Wrap(err, "unable to get onionServiceBackend")
+		return nil, fmt.Errorf("unable to get onionServiceBackend: %w", err)
 	}
 
 	return &onionServiceBackend, nil

@@ -18,6 +18,7 @@ package tor
 
 import (
 	"context"
+	"fmt"
 
 	rbacv1 "k8s.io/api/rbac/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
@@ -27,7 +28,8 @@ import (
 	"k8s.io/apimachinery/pkg/util/runtime"
 	k8slog "sigs.k8s.io/controller-runtime/pkg/log"
 
-	"github.com/cockroachdb/errors"
+	"errors"
+
 	torv1alpha2 "github.com/rgst-io/tor-controller/apis/tor/v1alpha2"
 )
 
@@ -53,12 +55,12 @@ func (r *Reconciler) reconcileRolebinding(ctx context.Context, tor *torv1alpha2.
 	if apierrors.IsNotFound(err) {
 		err := r.Create(ctx, newRolebinding)
 		if err != nil {
-			return errors.Wrapf(err, "failed to create Rolebinding %s", roleName)
+			return fmt.Errorf("failed to create Rolebinding %s: %w", roleName, err)
 		}
 
 		roleBinding = *newRolebinding
 	} else if err != nil {
-		return errors.Wrapf(err, "failed to get Rolebinding %s", roleName)
+		return fmt.Errorf("failed to get Rolebinding %s: %w", roleName, err)
 	}
 
 	if !metav1.IsControlledBy(&roleBinding.ObjectMeta, tor) {
@@ -73,7 +75,7 @@ func (r *Reconciler) reconcileRolebinding(ctx context.Context, tor *torv1alpha2.
 	if !rolebindingEqual(&roleBinding, newRolebinding) {
 		err := r.Update(ctx, newRolebinding)
 		if err != nil {
-			return errors.Wrapf(err, "failed to update Rolebinding %s", roleName)
+			return fmt.Errorf("failed to update Rolebinding %s: %w", roleName, err)
 		}
 	}
 

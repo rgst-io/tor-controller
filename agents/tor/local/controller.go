@@ -2,13 +2,15 @@ package local
 
 import (
 	"context"
+	"fmt"
 	"io"
 	"os"
 	"path"
 	"strings"
 	"time"
 
-	"github.com/cockroachdb/errors"
+	"errors"
+
 	log "github.com/sirupsen/logrus"
 
 	"k8s.io/apimachinery/pkg/util/runtime"
@@ -76,7 +78,7 @@ func (c *Controller) sync(key string) error {
 	if err != nil {
 		log.Errorf("Fetching object with key %s from store failed with %v", key, err)
 
-		return errors.Wrap(err, "fetching object from store")
+		return fmt.Errorf("fetching object from store: %w", err)
 	}
 
 	if !exists {
@@ -91,7 +93,7 @@ func (c *Controller) sync(key string) error {
 	if err != nil {
 		log.Errorf("Error in parseOnionService: %s", err)
 
-		return errors.Wrap(err, "parsing onion service")
+		return fmt.Errorf("parsing onion service: %w", err)
 	}
 
 	// torfile
@@ -99,7 +101,7 @@ func (c *Controller) sync(key string) error {
 	if err != nil {
 		log.Errorf("Generating config failed with %v", err)
 
-		return errors.Wrap(err, "generating config")
+		return fmt.Errorf("generating config: %w", err)
 	}
 
 	reload := false
@@ -110,7 +112,7 @@ func (c *Controller) sync(key string) error {
 	case os.IsNotExist(err):
 		reload = true
 	case err != nil:
-		return errors.Wrap(err, "reading torfile")
+		return fmt.Errorf("reading torfile: %w", err)
 	case string(torfile) != torConfig:
 		reload = true
 	}
@@ -120,7 +122,7 @@ func (c *Controller) sync(key string) error {
 		if err != nil {
 			log.Errorf("Reloading service failed with %v", err)
 
-			return errors.Wrap(err, "reloading service")
+			return fmt.Errorf("reloading service: %w", err)
 		}
 	}
 
@@ -194,7 +196,7 @@ func (c *Controller) sync(key string) error {
 		if err != nil {
 			log.Errorf("Generating ob_config failed with %v", err)
 
-			return errors.Wrap(err, "generating ob_config")
+			return fmt.Errorf("generating ob_config: %w", err)
 		}
 
 		obfile, err := os.ReadFile("/run/tor/service/ob_config")
@@ -203,7 +205,7 @@ func (c *Controller) sync(key string) error {
 		case os.IsNotExist(err):
 			reload = true
 		case err != nil:
-			return errors.Wrap(err, "reading ob_config")
+			return fmt.Errorf("reading ob_config: %w", err)
 		case string(obfile) != obConfig:
 			reload = true
 		}
@@ -215,7 +217,7 @@ func (c *Controller) sync(key string) error {
 			if err != nil {
 				log.Errorf("Writing config failed with %v", err)
 
-				return errors.Wrap(err, "writing ob_config")
+				return fmt.Errorf("writing ob_config: %w", err)
 			}
 		}
 	}
@@ -228,7 +230,7 @@ func (c *Controller) sync(key string) error {
 	if err != nil {
 		log.Errorf("Updating status failed with %v", err)
 
-		return errors.Wrap(err, "updating status")
+		return fmt.Errorf("updating status: %w", err)
 	}
 
 	return nil
@@ -239,7 +241,7 @@ func (c *Controller) updateOnionServiceStatus(onionService *v1alpha2.OnionServic
 	if err != nil {
 		log.Errorf("Got this error when trying to find hostname: %v", err)
 
-		return errors.Wrap(err, "reading hostname")
+		return fmt.Errorf("reading hostname: %w", err)
 	}
 
 	newHostname := strings.TrimSpace(string(hostname))
@@ -254,7 +256,7 @@ func (c *Controller) updateOnionServiceStatus(onionService *v1alpha2.OnionServic
 		if err != nil {
 			log.Errorf("Error updating onionService: %s", err)
 
-			return errors.Wrap(err, "updating onionService")
+			return fmt.Errorf("updating onionService: %w", err)
 		}
 	}
 
@@ -320,36 +322,36 @@ func (c *Controller) runWorker() {
 func copyIfNotExist(src, dst string) error {
 	_, err := os.Stat(dst)
 	if !os.IsNotExist(err) {
-		return errors.Wrap(err, "checking if file exists")
+		return fmt.Errorf("checking if file exists: %w", err)
 	}
 
 	log.Infof("Creating copy of %s at %s", src, dst)
 
 	srcfd, err := os.Open(src)
 	if err != nil {
-		return errors.Wrap(err, "opening source file")
+		return fmt.Errorf("opening source file: %w", err)
 	}
 	defer srcfd.Close()
 
 	dstfd, err := os.Create(dst)
 	if err != nil {
-		return errors.Wrap(err, "creating destination file")
+		return fmt.Errorf("creating destination file: %w", err)
 	}
 	defer dstfd.Close()
 
 	_, err = io.Copy(dstfd, srcfd)
 	if err != nil {
-		return errors.Wrap(err, "copying file")
+		return fmt.Errorf("copying file: %w", err)
 	}
 
 	srcinfo, err := os.Stat(src)
 	if err != nil {
-		return errors.Wrap(err, "getting source file info")
+		return fmt.Errorf("getting source file info: %w", err)
 	}
 
 	err = dstfd.Chmod(srcinfo.Mode())
 	if err != nil {
-		return errors.Wrap(err, "setting destination file mode")
+		return fmt.Errorf("setting destination file mode: %w", err)
 	}
 
 	return nil
@@ -362,7 +364,7 @@ func serviceReload(onionService *v1alpha2.OnionService, configData []byte) error
 	if err != nil {
 		log.Errorf("Writing config failed with %v", err)
 
-		return errors.Wrap(err, "writing config")
+		return fmt.Errorf("writing config: %w", err)
 	}
 
 	return nil

@@ -18,6 +18,7 @@ package tor
 
 import (
 	"context"
+	"fmt"
 
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -26,7 +27,8 @@ import (
 	"k8s.io/apimachinery/pkg/util/runtime"
 	k8slog "sigs.k8s.io/controller-runtime/pkg/log"
 
-	"github.com/cockroachdb/errors"
+	"errors"
+
 	monitoringv1 "github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring/v1"
 	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 
@@ -69,12 +71,12 @@ func (r *OnionBalancedServiceReconciler) reconcileServiceMonitor(
 
 		err := r.Create(ctx, newService)
 		if err != nil {
-			return errors.Wrapf(err, "failed to create ServiceMonitor %s", newService.Name)
+			return fmt.Errorf("failed to create ServiceMonitor %s: %w", newService.Name, err)
 		}
 
 		service = *newService
 	} else if err != nil {
-		return errors.Wrapf(err, "failed to get ServiceMonitor %s", service.Name)
+		return fmt.Errorf("failed to get ServiceMonitor %s: %w", service.Name, err)
 	}
 
 	if !metav1.IsControlledBy(&service.ObjectMeta, onionBalancedService) {
@@ -89,7 +91,7 @@ func (r *OnionBalancedServiceReconciler) reconcileServiceMonitor(
 		// ServiceMonitor is not requested but exists, deleting
 		err = r.Delete(ctx, &service)
 		if err != nil {
-			return errors.Wrapf(err, "failed to delete ServiceMonitor %s", service.Name)
+			return fmt.Errorf("failed to delete ServiceMonitor %s: %w", service.Name, err)
 		}
 
 		return nil
@@ -99,7 +101,7 @@ func (r *OnionBalancedServiceReconciler) reconcileServiceMonitor(
 	if !monitorServiceEqual(&service, newService) {
 		err := r.Update(ctx, newService)
 		if err != nil {
-			return errors.Wrapf(err, "failed to update ServiceMonitor %s", service.Name)
+			return fmt.Errorf("failed to update ServiceMonitor %s: %w", service.Name, err)
 		}
 	}
 

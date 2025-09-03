@@ -36,7 +36,6 @@ import (
 	// byte result of the hash (or possibly just 64 random bytes that are used the same
 	// way as the hash result).
 
-	"github.com/cockroachdb/errors"
 	torutil "github.com/cretz/bine/torutil"
 	ed25519 "github.com/cretz/bine/torutil/ed25519"
 )
@@ -66,7 +65,7 @@ type OnionV3 struct {
 func GenerateOnionV3() (*OnionV3, error) {
 	key, err := ed25519.GenerateKey(nil)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to generate ed25519 key")
+		return nil, fmt.Errorf("failed to generate ed25519 key: %w", err)
 	}
 
 	publicKey := key.PrivateKey().KeyPair().PublicKey()
@@ -157,7 +156,7 @@ func doHashPassword(input string) (string, error) {
 
 	_, err := rand.Read(salt)
 	if err != nil {
-		return "", errors.Wrap(err, "failed to generate random salt")
+		return "", fmt.Errorf("failed to generate random salt: %w", err)
 	}
 
 	// Inspired by: https://stackoverflow.com/questions/48054399/get-the-hashed-tor-password-automated-in-python

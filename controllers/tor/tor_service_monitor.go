@@ -18,6 +18,7 @@ package tor
 
 import (
 	"context"
+	"fmt"
 
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -26,7 +27,8 @@ import (
 	"k8s.io/apimachinery/pkg/util/runtime"
 	k8slog "sigs.k8s.io/controller-runtime/pkg/log"
 
-	"github.com/cockroachdb/errors"
+	"errors"
+
 	monitoringv1 "github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring/v1"
 	torv1alpha2 "github.com/rgst-io/tor-controller/apis/tor/v1alpha2"
 	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
@@ -65,12 +67,12 @@ func (r *Reconciler) reconcileServiceMonitor(ctx context.Context, tor *torv1alph
 
 		err := r.Create(ctx, newService)
 		if err != nil {
-			return errors.Wrapf(err, "failed to create Service %#v", newService)
+			return fmt.Errorf("failed to create Service %#v: %w", newService, err)
 		}
 
 		service = *newService
 	} else if err != nil {
-		return errors.Wrapf(err, "failed to get Service %#v", newService)
+		return fmt.Errorf("failed to get Service %#v: %w", newService, err)
 	}
 
 	if !metav1.IsControlledBy(&service.ObjectMeta, tor) {
@@ -85,7 +87,7 @@ func (r *Reconciler) reconcileServiceMonitor(ctx context.Context, tor *torv1alph
 		// ServiceMonitor is not requested but exists, deleting
 		err = r.Delete(ctx, &service)
 		if err != nil {
-			return errors.Wrapf(err, "failed to delete Service %#v", newService)
+			return fmt.Errorf("failed to delete Service %#v: %w", newService, err)
 		}
 
 		return nil
@@ -95,7 +97,7 @@ func (r *Reconciler) reconcileServiceMonitor(ctx context.Context, tor *torv1alph
 	if !monitorServiceEqual(&service, newService) {
 		err := r.Update(ctx, newService)
 		if err != nil {
-			return errors.Wrapf(err, "failed to update Service %#v", newService)
+			return fmt.Errorf("failed to update Service %#v: %w", newService, err)
 		}
 	}
 

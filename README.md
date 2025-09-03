@@ -44,8 +44,6 @@ Check [install section](#install) bellow for more information.
 
 - [Quick start](#quick-start)
 - [Table of Contents](#table-of-contents)
-  - [Changes](#changes)
-  - [Roadmap / TODO](#roadmap--todo)
   - [Install](#install)
   - [Resources](#resources)
   - [How to](#how-to)
@@ -71,51 +69,6 @@ Check [install section](#install) bellow for more information.
   - [Utils](#utils)
   - [Other projects](#other-projects)
 
-## Changes
-
-Full changelog: [CHANGELOG](CHANGELOG.md)
-
-- **v0.0.x**
-  - Go updated to `1.17`
-  - Code ported to kubebuilder version `3`
-  - Domain updated moved from `tor.k8s.io` (protected) to `k8s.torproject.org` (see https://github.com/kubernetes/enhancements/pull/1111)
-  - Added `OnionBalancedService` type
-  - New OnionService version v1alpha2
-  - Migrate clientset code to controller-runtime
-- **v0.3.x**
-  - Helm chart
-  - MultiArch images. Supported architectures: amd64, arm, arm64
-- **v0.4.x**
-  - Implement `OnionBalancedService` resource (HA Onion Services)
-- **v0.5.x**
-  - Tor & OnionBalance metric exporters. Prometheus ServiceMonitor integration
-  - Bring your own secret key
-- **v0.6.x**
-  - Support specifying PodSpec properties on the OnionService/OnionBalancer pods
-  - Tor instance CRD supporting custom config and Client/Server/Metrics/Control ports
-- **v0.7.x**
-  - Onion Service's authorized clients support
-- **v0.8.x**
-  - Namespaced deployments
-- **v0.9.x**
-  - Controller deployment automatic rollout on chart upgrade
-  - Upgraded Tor daemon to 0.4.7.x
-  - Bridges support (obfs4 pluggable transport shipped alongside Tor daemon)
-  - Implemented ExtraConfig in OnionService
-- **v0.10.x**
-  - Tor & controllers running as non-root
-  - Tor compiled with PoW anti-DoS protection
-
-## Roadmap / TODO
-
-- Tor daemon management via socket (e.g: config reload)
-- Manage Tor Server fingerprinting (ed25519_master_id_secret_key, secret_id_key) and automatic family and nickname management
-- Tor relays:
-  - Non exit: Bridge, Snowflake, Middle/Guard
-  - Exit relay: Tor Exit
-- Tor-Istio plugin/extension to route pod egress traffic thru Tor
-- Automated Vanguards Tor Add-on deploy/setup
-
 ## Install
 
 Using helm (recommended):
@@ -130,12 +83,6 @@ helm upgrade --install \
 
 For namespaced deployments add `--set namespaced=true` to helm's command when deploying.
 Check [charts/tor-controller/README.md](charts/tor-controller/README.md) for a full set of available options.
-
-Install tor-controller directly using the manifest (cluster-scoped):
-
-```bash
-kubectl apply -f https://raw.githubusercontent.com/bugfest/tor-controller/master/hack/install.yaml
-```
 
 ## Resources
 
@@ -170,7 +117,9 @@ Create some deployment to test against, in this example we'll deploy an echoserv
 
 Apply it:
 
-    kubectl apply -f hack/sample/echoserver.yaml
+```bash
+kubectl apply -f hack/sample/echoserver.yaml
+```
 
 For a fixed address, we need a private key. This should be kept safe, since
 someone can impersonate your onion service if it is leaked. Tor-Controller will generate an Onion v3 key-pair for you (stored as a secret), unless it already exists
@@ -196,7 +145,9 @@ spec:
 
 Apply it:
 
-    kubectl apply -f hack/sample/onionservice.yaml
+```bash
+kubectl apply -f hack/sample/onionservice.yaml
+```
 
 List active OnionServices:
 
@@ -491,7 +442,7 @@ example, with a default backend at [hack/sample/full-example.yaml](hack/sample/f
 
 Create an onion balanced service, e.g: [hack/sample/onionbalancedservice.yaml](hack/sample/onionbalancedservice.yaml). `spec.replicas` is the number of backends that will be deployed. An additional `onionbalance` pod will be created to act as frontend. The `spec.template.spec` follows the definition of `OnionService` type.
 
-```
+```yaml
 apiVersion: tor.k8s.torproject.org/v1alpha2
 kind: OnionBalancedService
 metadata:
@@ -505,7 +456,9 @@ spec:
 
 Apply it:
 
-    kubectl apply -f hack/sample/onionbalancedservice.yaml
+```bash
+kubectl apply -f hack/sample/onionbalancedservice.yaml
+```
 
 List the frontend onion:
 
@@ -532,7 +485,7 @@ example-onionbalanced-service-obb-2   4r4n25aewayyupxby34bckljr5rn7j4xynagvqqgde
 
 Create a Tor instance, e.g: [hack/sample/tor.yaml](hack/sample/tor.yaml).
 
-```
+```yaml
 apiVersion: tor.k8s.torproject.org/v1alpha2
 kind: Tor
 metadata:
@@ -543,7 +496,9 @@ metadata:
 
 Apply it:
 
-    kubectl apply -f hack/sample/tor.yaml
+```bash
+kubectl apply -f hack/sample/tor.yaml
+```
 
 List the tor instances:
 
